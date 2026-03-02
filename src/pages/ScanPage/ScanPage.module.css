@@ -1,0 +1,142 @@
+.content {
+    background: #f7faf8;
+    min-height: 100dvh;
+}
+
+.header {
+    font-size: 24px;
+    font-weight: 700;
+    color: #131C20;
+    margin-bottom: 12px;
+}
+
+.dropImg {
+    margin-right: 8px;
+}
+
+.descr {
+    color: #576B75;
+    margin-bottom: 32px;
+}
+
+.btn {
+    font-size: 16px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: #fff;
+    background: #0B1247;
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn:hover {
+    background: #acbd9e;
+    color: #0b1247;
+}
+
+.text {
+    font-size: 14px;
+    color: #576B75;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.wrapBox {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.box {
+    background: #fff;
+    padding: 16px;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    transition: transform 0.1s ease, background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.box:hover {
+    background-color: #adbc9f4d;
+}
+
+.box:active {
+    transform: scale(0.98);
+}
+
+.block {
+    width: 40px;
+    height: 40px;
+    color: #fff;
+    background: #0B1247;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-right: 15px;
+}
+
+.block span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.infoHeader {
+    color: #131C20;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.infoText {
+    font-size: 14px;
+    color: #576B75;
+}
+
+.opted {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #0B1247;
+    position: relative;
+    margin-left: auto;
+}
+
+.opted::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.unopted {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: auto;
+    border: 1px solid #0B1247;
+}

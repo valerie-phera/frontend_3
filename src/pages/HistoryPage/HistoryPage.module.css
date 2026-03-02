@@ -1,0 +1,23 @@
+.content {
+    background: #f7faf8;
+    min-height: 100dvh;
+}
+
+.header {
+    font-size: 24px;
+    font-weight: 700;
+    color: #131C20;
+    margin-bottom: 12px;
+}
+
+.descr {
+    color: #576B75;
+    margin-bottom: 32px;
+}
+
+.report {
+     color: #576B75;
+     padding: 64px 0;
+     text-align: center;
+}
+

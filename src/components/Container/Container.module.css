@@ -1,0 +1,9 @@
+.containerStyle {
+    max-width: 448px;
+    width: 100%;
+    padding: 32px 24px 24px;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,57 @@
+.wrap {
+    background: #ffffffe6;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border: 1px solid #d8ded3;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.wrapInner {
+    max-width: 448px;
+    width: 100%;
+    padding: 8px 22px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.indicator {
+    position: absolute;
+    top: 4px;
+    height: 4px;
+    background: #0B1247;
+
+    width: 0;
+    transform: translateX(0);
+    transition: transform 0.3s ease, width 0.3s ease;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 16px;
+
+    text-decoration: none;
+    color: #576b75;
+}
+
+.active {
+    opacity: 1;
+    color: #0B1247;
+}
+
+.icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.name {
+    font-size: 12px;
+    font-weight: 500;
+}

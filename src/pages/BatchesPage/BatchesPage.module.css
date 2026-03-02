@@ -1,0 +1,113 @@
+.content {
+    background: #f7faf8;
+    min-height: 100dvh;
+}
+
+.wrapTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.header {
+    font-size: 24px;
+    font-weight: 700;
+    color: #131C20;
+    margin-bottom: 8px;
+}
+
+.descr {
+    color: #576B75;
+}
+
+.btn {
+    font-size: 14px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: #fff;
+    background: #0B1247;
+    padding: 4px 12px;
+    height: 36px;
+    line-height: 1;
+    border-radius: 10px;
+
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+.btn:hover {
+    background: #acbd9e;
+    color: #0b1247;
+}
+
+.btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.wrapBox {
+    display: flex;
+    margin-bottom: 16px;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.opted {
+    padding: 0 12px;
+    background: #0B1247;
+    border-radius: 10px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.opted:hover {
+    background: #acbd9e;
+    color: #0b1247;
+}
+
+.unopted {
+    padding: 0 12px;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #131C20;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.unopted:hover {
+    background: #acbd9e;
+    color: #0b1247;
+}
+
+.unopted span {
+    padding-right: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+}
+
+.report {
+    color: #576B75;
+    padding: 64px 0;
+    text-align: center;
+}

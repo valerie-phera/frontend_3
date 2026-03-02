@@ -1,0 +1,22 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    font-family: "IBM Plex Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
