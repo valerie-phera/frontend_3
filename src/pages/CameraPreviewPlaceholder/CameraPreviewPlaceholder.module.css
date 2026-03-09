@@ -1,0 +1,87 @@
+.content {
+    background: #f7faf8;
+    min-height: 100dvh;
+}
+
+.infoBlock {
+    padding: 32px;
+    margin-bottom: 24px;
+    background-color: #eaeee8;
+    border: 1px solid #d8ded3;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon {
+    width: 48px;
+    height: 48px;
+}
+
+.text {
+    font-size: 14px;
+    color: #576B75;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.blockBtn {
+    display: flex;
+    gap: 12px;
+}
+
+.btnTransparent {
+    font-size: 14px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: #131C20;
+    background: #f7f8f8;
+    padding: 8px 16px;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+.btnTransparent:hover {
+    background: #acbd9e;
+    color: #0b1247;
+}
+
+.btn {
+    font-size: 14px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: #fff;
+    background: #0B1247;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    line-height: 1.6;
+}
+
+.btnTransparent,
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+
+    flex: 1;
+}
+
+.btn:hover {
+    background: #acbd9e;
+    color: #0b1247;
+    border: none;
+}
+
+.btnTransparent svg,
+.btn svg {
+    width: 16px;
+    height: 16px;
+}
