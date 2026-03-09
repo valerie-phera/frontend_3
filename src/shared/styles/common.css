@@ -17,6 +17,11 @@ body {
     scrollbar-gutter: stable;
 }
 
+/* Отступ снизу, чтобы контент при скролле уходил выше нижнего бара навигации */
+.app-content {
+    padding-bottom: 100px;
+}
+
 .mono {
   font-family: 'IBM Plex Mono', monospace;
 }

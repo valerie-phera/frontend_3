@@ -1,6 +1,7 @@
 .content {
     background: #f7faf8;
     min-height: 100dvh;
+
 }
 
 .header {
@@ -16,8 +17,152 @@
 }
 
 .report {
-     color: #576B75;
-     padding: 64px 0;
-     text-align: center;
+    color: #576B75;
+    padding: 64px 0;
+    text-align: center;
 }
 
+.filterBar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.filterBtn,
+.filterBtnActive {
+    font-size: 14px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    padding: 0 12px;
+    border-radius: 10px;
+    line-height: 20px;
+    height: 36px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filterBtn {
+    color: #131C20;
+    background: #f7f8f8;
+    border: 1px solid #d8ded3;
+}
+
+.filterBtnActive {
+    color: #fff;
+    background: #0B1247;
+    border: 1px solid #0B1247;
+}
+
+.filterBtnActive:hover,
+.filterBtn:hover {
+    background: #acbd9e;
+    color: #0b1247;
+    border: 1px solid #acbd9e;
+}
+
+.filterBtn span,
+.filterBtnActive span {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    margin-right: 10px;
+}
+
+.list {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.item {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+
+}
+
+.check {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+}
+
+.itemTest {
+    width: 24px;
+    height: 24px;
+    background-color: #0B1247;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.itemValue {
+    font-weight: 500;
+    font-size: 14px;
+    opacity: 0.8;
+    line-height: 1.25rem;
+    color: #fff;
+}
+
+.itemValue span {
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color: #fff;
+}
+
+.itemTime {
+    font-size: 12px;
+    color: #fff;
+    opacity: 0.75;
+    line-height: 1rem;
+    font-weight: 500;
+}
+
+.deleteIcon {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    background: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: inherit;
+    border-radius: 10px;
+}
+
+.deleteIcon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.deleteIcon:hover {
+    background-color: rgb(160, 156, 156);
+}
+
+/* Light background: text and icon are dark */
+.itemInfo,
+.itemInfo *,
+.itemValue span,
+.deleteIcon {
+    color: #1A1A1A;
+}
+
+/* Dark background: text and icon are light */
+.itemDark .itemInfo,
+.itemDark .itemInfo *,
+.itemDark .deleteIcon {
+    color: #fff;
+}

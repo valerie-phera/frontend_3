@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Check from "../../assets/Check";
 import AddToBatch from "../../assets/AddToBatch";
 import ExportResults from "../../assets/ExportResults";
+import { useHistory } from "../../context/HistoryContext";
 
 import styles from "./ResultsPage.module.css";
 
@@ -41,11 +42,38 @@ const gradientM = [
     { position: 1, color: "rgb(101,112,114)" }
 ];
 
+const getAcidityLabel = (value) => {
+    if (value >= 3.5 && value <= 4.0) {
+        return "Strongly Acidic";
+    }
+    if (value > 4.0 && value <= 5.0) {
+        return "Slightly Acidic";
+    }
+    if (value > 5.0 && value <= 5.9) {
+        return "Acidic";
+    }
+    if (value >= 6.0 && value <= 6.5) {
+        return "Neutral";
+    }
+    if (value > 6.5 && value <= 7.0) {
+        return "Slightly Basic";
+    }
+
+    if (value < 7) {
+        return "Acidic";
+    }
+    if (value > 7) {
+        return "Alkaline";
+    }
+    return "Neutral";
+};
+
 const ResultsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const selectedTests = location.state?.selectedTests || [];
     const [results, setResults] = useState([]);
+    const { addResults } = useHistory();
 
     const testsData = {
         S: { name: "Test S", gradient: gradientS },
@@ -53,6 +81,7 @@ const ResultsPage = () => {
     };
 
     useEffect(() => {
+        const createdAt = Date.now();
         setResults(
             selectedTests
                 .map((id) => {
@@ -61,8 +90,11 @@ const ResultsPage = () => {
 
                     const value = randomStep(3.5, 7.0, 0.1);
                     const confidence = Math.floor(Math.random() * 31) + 70;
+                    const relativePos = (value - 3.5) / (7 - 3.5);
+                    const color = getGradientColor(test.gradient, relativePos);
+                    const label = getAcidityLabel(value);
 
-                    return { id, value, confidence };
+                    return { id, value, confidence, color, label, createdAt };
                 })
                 .filter(Boolean)
         );
@@ -78,12 +110,11 @@ const ResultsPage = () => {
                 </p>
 
                 <div className={styles.wrapInfoBlock}>
-                    {results.map(({ id, value, confidence }) => {
+                    {results.map(({ id, value, confidence, color }) => {
                         const test = testsData[id];
                         if (!test) return null;
 
                         const relativePos = (value - 3.5) / (7 - 3.5); // 0→1
-                        const color = getGradientColor(test.gradient, relativePos);
 
                         return (
                             <div
@@ -103,7 +134,7 @@ const ResultsPage = () => {
                                         </div>
 
                                         <div className={styles.infoText}>
-                                            {value < 7 ? "Acidic" : value > 7 ? "Alkaline" : "Neutral"}
+                                            {getAcidityLabel(value)}
                                         </div>
 
                                         <div className={styles.infoConfidence}>
@@ -143,7 +174,13 @@ const ResultsPage = () => {
                         <button className={styles.btnTransparent} onClick={() => navigate("/scan")}>
                             Scan Again
                         </button>
-                        <button className={styles.btn} onClick={() => navigate("/history")}>
+                        <button
+                            className={styles.btn}
+                            onClick={() => {
+                                addResults(results);
+                                navigate("/history");
+                            }}
+                        >
                             <Check /> View History
                         </button>
                     </div>
