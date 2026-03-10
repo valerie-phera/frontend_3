@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import Container from "../../components/Container/Container";
 import { useHistory } from "../../context/HistoryContext";
 import { formatCreatedAt } from "../../utils/formatDate";
@@ -30,6 +30,18 @@ const HistoryPage = () => {
     const [activeFilter, setActiveFilter] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [checkedIds, setCheckedIds] = useState(() => new Set());
+    const [isExportOpen, setIsExportOpen] = useState(false);
+    const exportRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (exportRef.current && !exportRef.current.contains(e.target)) {
+                setIsExportOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const toggleCheck = (itemId, e) => {
         e.stopPropagation();
@@ -121,7 +133,37 @@ const HistoryPage = () => {
                             <button type="button" className={styles.selectAll} onClick={handleSelectAll} aria-label="Select all">
                                 <SelectAll />
                             </button>
-                            <div className={styles.export}><Export /></div>
+                            <div className={styles.exportWrap} ref={exportRef}>
+                                <button
+                                    type="button"
+                                    className={styles.export}
+                                    onClick={() => setIsExportOpen((prev) => !prev)}
+                                    aria-label="Export"
+                                    aria-expanded={isExportOpen}
+                                    aria-haspopup="true"
+                                >
+                                    <Export />
+                                </button>
+                                {isExportOpen && (
+                                    <ul className={styles.exportDropdown} role="menu">
+                                        <li role="none">
+                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={() => setIsExportOpen(false)}>
+                                                Export CSV{checkedIds.size > 0 ? ` (${checkedIds.size})` : ""}
+                                            </button>
+                                        </li>
+                                        <li role="none">
+                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={() => setIsExportOpen(false)}>
+                                                Export JSON{checkedIds.size > 0 ? ` (${checkedIds.size})` : ""}
+                                            </button>
+                                        </li>
+                                        <li role="none">
+                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={() => setIsExportOpen(false)}>
+                                                Export XLSX{checkedIds.size > 0 ? ` (${checkedIds.size})` : ""}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                )}
+                            </div>
                         </div>
                         <div className={styles.list}>
                             {filtered.map((item) => {
