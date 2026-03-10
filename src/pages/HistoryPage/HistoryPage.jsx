@@ -28,6 +28,7 @@ const isDarkBackground = (colorStr) => {
 const HistoryPage = () => {
     const { items, removeItem } = useHistory();
     const [activeFilter, setActiveFilter] = useState("all");
+    const [searchQuery, setSearchQuery] = useState("");
     const [checkedIds, setCheckedIds] = useState(() => new Set());
 
     const toggleCheck = (itemId, e) => {
@@ -40,10 +41,34 @@ const HistoryPage = () => {
         });
     };
 
+    const handleSelectAll = () => {
+        const filteredIds = filtered.map((item) => item.itemId);
+        const allSelected = filtered.length > 0 && filtered.every((item) => checkedIds.has(item.itemId));
+        setCheckedIds((prev) => {
+            const next = new Set(prev);
+            if (allSelected) {
+                filteredIds.forEach((id) => next.delete(id));
+            } else {
+                filteredIds.forEach((id) => next.add(id));
+            }
+            return next;
+        });
+    };
+
     const filtered = useMemo(() => {
-        if (activeFilter === "all") return items;
-        return items.filter((item) => item.id === activeFilter);
-    }, [items, activeFilter]);
+        let list = activeFilter === "all" ? items : items.filter((item) => item.id === activeFilter);
+        const query = searchQuery.trim().toLowerCase();
+        if (query) {
+            const queryNorm = query.replace(",", ".");
+            list = list.filter((item) => {
+                const test = testsData[item.id] || { name: item.id };
+                const valueStr = item.value.toFixed(1);
+                const nameStr = (test.name || "").toLowerCase();
+                return valueStr.includes(queryNorm) || nameStr.includes(query);
+            });
+        }
+        return list;
+    }, [items, activeFilter, searchQuery]);
 
     return (
         <main className={styles.content}>
@@ -86,8 +111,16 @@ const HistoryPage = () => {
                             <span className={styles.searchIcon} aria-hidden>
                                 <Search />
                             </span>
-                            <input type="text" placeholder="Search results" className={styles.searchInput} />
-                            <div className={styles.selectAll}><SelectAll /></div>
+                            <input
+                                type="text"
+                                placeholder="Search results"
+                                className={styles.searchInput}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            <button type="button" className={styles.selectAll} onClick={handleSelectAll} aria-label="Select all">
+                                <SelectAll />
+                            </button>
                             <div className={styles.export}><Export /></div>
                         </div>
                         <div className={styles.list}>
