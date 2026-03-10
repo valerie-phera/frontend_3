@@ -68,6 +68,85 @@
     margin-right: 10px;
 }
 
+.searchBar {
+    position: relative;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #576B75;
+    pointer-events: none;
+}
+
+.searchIcon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 8px 12px 12px 36px;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: "IBM Plex Sans", sans-serif;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    background: #f7f8f8;
+    color: #131C20;
+    border-color: #d8ded3;
+}
+
+.searchInput::placeholder {
+    color: #576B75;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #0B1247;
+}
+
+.export,
+.selectAll {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    background-color: #f7f8f8;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.export:hover,
+.selectAll:hover {
+    background: #acbd9e;
+}
+
+.export svg,
+.selectAll svg {
+    width: 16px;
+    height: 16px;
+}
+
 .list {
     border-radius: 0.75rem;
     overflow: hidden;
@@ -85,8 +164,37 @@
 .check {
     width: 16px;
     height: 16px;
-    border: 1px solid #fff;
+    min-width: 16px;
+    min-height: 16px;
+    border: 1px solid #0B1247;
     border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.itemDark .check {
+    border-color: #fff;
+}
+
+.check:hover {
+    background: rgba(11, 18, 71, 0.15);
+}
+
+.checkChecked {
+    background: #0B1247;
+    border-color: #0B1247;
+}
+
+.checkChecked svg {
+    width: 12px;
+    height: 12px;
 }
 
 .itemTest {
@@ -149,7 +257,7 @@
 }
 
 .deleteIcon:hover {
-    background-color: rgb(160, 156, 156);
+    background: rgba(11, 18, 71, 0.15);
 }
 
 /* Light background: text and icon are dark */
