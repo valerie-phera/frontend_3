@@ -40,12 +40,12 @@ const HomePage = () => {
                     <p className={styles.descr}>Scan, track, and organize your pH results</p>
                     <button className={styles.btn} onClick={() => { navigate("/scan") }}><ScanBtn className={styles.btnIcon} /><span>Start Scanning</span></button>
                     <div className={styles.wrapBox}>
-                        <div className={styles.box}>
+                        <div className={styles.box} onClick={() => { navigate("/history") }}>
                             <div className={styles.wrapImg}><History /></div>
                             <div className={styles.num}>{items.length}</div>
                             <p className={styles.text}>Total Scans</p>
                         </div>
-                        <div className={styles.box}>
+                        <div className={styles.box} onClick={() => { navigate("/batches") }}>
                             <div className={styles.wrapImg}><Batches /></div>
                             <div className={styles.num}>0</div>
                             <p className={styles.text}>Batches</p>
