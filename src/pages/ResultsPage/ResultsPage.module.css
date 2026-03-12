@@ -209,3 +209,46 @@
     width: 16px;
     height: 16px;
 }
+
+.exportWrap {
+    position: relative;
+}
+
+.exportDropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%);
+    margin-top: 2px;
+    min-width: 170px;
+    width: 170px;
+    padding: 4px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.exportOption {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: "IBM Plex Sans", sans-serif;
+    color: #131C20;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.exportOption:hover {
+    background: #10343c;
+    color: #fff;
+}

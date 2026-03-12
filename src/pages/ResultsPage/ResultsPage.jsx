@@ -1,7 +1,8 @@
 import Container from "../../components/Container/Container";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Check from "../../assets/Check";
+import Export from "../../assets/Export";
 import AddToBatch from "../../assets/AddToBatch";
 import ExportResults from "../../assets/ExportResults";
 import { useHistory } from "../../context/HistoryContext";
@@ -74,6 +75,19 @@ const ResultsPage = () => {
     const selectedTests = location.state?.selectedTests || [];
     const [results, setResults] = useState([]);
     const { addResults } = useHistory();
+    const [isExportOpen, setIsExportOpen] = useState(false);
+    const exportRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (exportRef.current && !exportRef.current.contains(e.target)) {
+                setIsExportOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
 
     const testsData = {
         S: { name: "Test S", gradient: gradientS },
@@ -167,9 +181,50 @@ const ResultsPage = () => {
                     <button className={styles.btnTransparent}>
                         <AddToBatch /> Add to Batch
                     </button>
-                    <button className={styles.btnTransparent}>
-                        <ExportResults /> Export Results
-                    </button>
+                    <div className={styles.exportWrap} ref={exportRef}>
+                        <button
+                            type="button"
+                            className={styles.btnTransparent}
+                            onClick={() => setIsExportOpen(prev => !prev)}
+                        >
+                            <Export /> Export Results
+                        </button>
+
+                        {isExportOpen && (
+                            <ul className={styles.exportDropdown} role="menu">
+                                <li role="none">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={styles.exportOption}
+                                        onClick={() => setIsExportOpen(false)}
+                                    >
+                                        Export CSV
+                                    </button>
+                                </li>
+                                <li role="none">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={styles.exportOption}
+                                        onClick={() => setIsExportOpen(false)}
+                                    >
+                                        Export JSON
+                                    </button>
+                                </li>
+                                <li role="none">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={styles.exportOption}
+                                        onClick={() => setIsExportOpen(false)}
+                                    >
+                                        Export XLSX
+                                    </button>
+                                </li>
+                            </ul>
+                        )}
+                    </div>
                     <div className={styles.blockBtn}>
                         <button className={styles.btnTransparent} onClick={() => navigate("/scan")}>
                             Scan Again
