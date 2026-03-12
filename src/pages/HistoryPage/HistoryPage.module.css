@@ -183,9 +183,52 @@
 }
 
 .exportOption:hover {
-    /* background: #f7f8f8; */
     background: #10343c;
     color: #fff;
+}
+
+.amountBar {
+    padding: 8px;
+    margin-bottom: 12px;
+    background-color: #0b12471a;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+}
+
+.amoutnValue {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #131C20;
+}
+
+.close {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 10px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    margin-left: auto;
+}
+
+.close:hover {
+    background-color: #acbd9e;
+}
+
+.close svg {
+    width: 16px;
+    height: 16px;
 }
 
 .list {

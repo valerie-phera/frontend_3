@@ -2,7 +2,7 @@ import Container from "../../components/Container/Container";
 import { useNavigate, useLocation } from "react-router-dom";
 import Photo from "../../assets/Photo";
 import Check from "../../assets/Check";
-import Close from "../../assets/Close";
+import CloseIcon from "../../assets/CloseIcon";
 
 import styles from "./CameraPreviewPlaceholder.module.css";
 
@@ -25,7 +25,7 @@ const CameraPreviewPlaceholder = () => {
 
                 <div className={styles.blockBtn}>
                     <button className={styles.btnTransparent} onClick={() => navigate("/scan")}>
-                        <Close /> Back
+                        <CloseIcon /> Back
                     </button>
                     <button
                         className={styles.btn}

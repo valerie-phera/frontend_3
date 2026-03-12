@@ -7,6 +7,7 @@ import Check from "../../assets/Check";
 import Search from "../../assets/Search";
 import SelectAll from "../../assets/SelectAll";
 import Export from "../../assets/Export";
+import CloseIcon from "../../assets/CloseIcon";
 
 import styles from "./HistoryPage.module.css";
 
@@ -165,6 +166,14 @@ const HistoryPage = () => {
                                 )}
                             </div>
                         </div>
+                        {checkedIds.size > 0 && (
+                         <div className={styles.amountBar}>
+                            <div className={styles.amoutnValue}>{checkedIds.size} selected</div>
+                            <button type="button" className={styles.close} onClick={() => setCheckedIds(new Set())} aria-label="Clear selection">
+                                <CloseIcon />
+                            </button>
+                         </div>
+                        )}
                         <div className={styles.list}>
                             {filtered.map((item) => {
                                 const test = testsData[item.id] || { name: item.id };
