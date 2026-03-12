@@ -93,3 +93,99 @@
     color: #576B75;
     font-size: 14px;
 }
+
+.itemsTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.itemsTitleName {
+    color: #131C20;
+    font-weight: 600;
+}
+
+.itemsTitlebtn {
+    color: #0b1247;
+    font-weight: 500;
+    font-size: 14px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 10px;
+    height: 36px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.itemsTitlebtn:hover {
+    background-color: #acbd9e;
+}
+
+/* Last 3 tests — same format as HistoryPage */
+.recentList {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.item {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.itemTest {
+    width: 24px;
+    height: 24px;
+    background-color: #0B1247;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.itemInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.itemValue {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.25rem;
+}
+
+.itemValue span {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.itemTime {
+    font-size: 12px;
+    opacity: 0.75;
+    line-height: 1rem;
+    font-weight: 500;
+}
+
+.itemInfo,
+.itemInfo *,
+.itemValue span {
+    color: #1A1A1A;
+}
+
+.itemDark .itemInfo,
+.itemDark .itemInfo * {
+    color: #fff;
+}
