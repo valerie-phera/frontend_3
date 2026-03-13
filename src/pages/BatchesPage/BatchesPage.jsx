@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Container from "../../components/Container/Container";
 import Plus from "../../assets/Plus";
 import CloseIcon from "../../assets/CloseIcon";
+import Export from "../../assets/Export";
 import DeleteIcon from "../../assets/DeleteIcon";
 
 import styles from "./BatchesPage.module.css";
@@ -141,6 +142,22 @@ const BatchesPage = () => {
                                         <div className={styles.batchMeta}>
                                             {formatDateOnly(batch.createdAt)}
                                         </div>
+                                    </div>
+                                    <div className={styles.batchActions}>
+                                        <div className={styles.exportAction}>
+                                            <Export />
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className={styles.deleteAction}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setBatches((prev) => prev.filter((b) => b.id !== batch.id));
+                                            }}
+                                            aria-label="Delete batch"
+                                        >
+                                            <DeleteIcon />
+                                        </button>
                                     </div>
                                 </div>
                                 {openBatchId === batch.id &&

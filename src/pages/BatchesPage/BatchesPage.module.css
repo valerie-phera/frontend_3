@@ -251,27 +251,71 @@
     border: 1px solid #d8ded3;
     padding: 16px;
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
+    justify-content: space-between;
     gap: 12px;
     cursor: pointer;
 }
 
 .batchInfo {
-    display: flex;
+    /* display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; */
 }
 
 .batchTitle {
     font-size: 16px;
     font-weight: 600;
     color: #131C20;
+    margin-bottom: 7px;
 }
 
 .batchMeta {
     font-size: 12px;
     color: #576B75;
     line-height: 16px;
+}
+
+.batchActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.batchActions svg {
+    width: 16px;
+    height: 16px;
+}
+
+.deleteAction,
+.exportAction {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.deleteAction {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.deleteAction svg {
+    stroke: #df3a3a;
+}
+
+.deleteAction:hover,
+.exportAction:hover {
+    background-color: #acbd9e;
+}
+
+.deleteAction:hover svg {
+    stroke: #0b1247;
 }
 
 .batchTests {
