@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Container from "../../components/Container/Container";
 import Plus from "../../assets/Plus";
 import CloseIcon from "../../assets/CloseIcon";
+import DeleteIcon from "../../assets/DeleteIcon";
 
 import styles from "./BatchesPage.module.css";
 
@@ -13,12 +14,58 @@ const formatDateOnly = (timestamp) => {
     return `${day}.${month}.${year}`;
 };
 
+const isDarkBackground = (colorStr) => {
+    const m = colorStr?.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/);
+    if (!m) return false;
+    const r = Number(m[1]) / 255;
+    const g = Number(m[2]) / 255;
+    const b = Number(m[3]) / 255;
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance < 0.5;
+};
+
 const BatchesPage = () => {
     const [selected, setSelected] = useState("All");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [batchName, setBatchName] = useState("");
     const [batchDescription, setBatchDescription] = useState("");
-    const [batches, setBatches] = useState([]);
+    const [batches, setBatches] = useState(() => {
+        try {
+            const raw = window.localStorage.getItem("phScannerBatches");
+            const parsed = raw ? JSON.parse(raw) : [];
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return [];
+        }
+    });
+    const nameInputRef = useRef(null);
+    const [openBatchId, setOpenBatchId] = useState(null);
+
+    useEffect(() => {
+        if (isModalOpen && nameInputRef.current) {
+            nameInputRef.current.focus();
+        }
+    }, [isModalOpen]);
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem("phScannerBatches", JSON.stringify(batches));
+        } catch {
+            // ignore
+        }
+    }, [batches]);
+    // console.log(batches);
+
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                setIsModalOpen(false);
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     const handleCreateBatch = () => {
         const name = batchName.trim();
@@ -27,7 +74,7 @@ const BatchesPage = () => {
         }
         const now = Date.now();
         const newBatch = {
-            id: now,
+            id: `batch-${now}-${Math.random().toString(36).slice(2)}`,
             name,
             description: batchDescription.trim(),
             createdAt: now,
@@ -82,19 +129,77 @@ const BatchesPage = () => {
                 ) : (
                     <div className={styles.batchList}>
                         {batches.map((batch) => (
-                            <div key={batch.id} className={styles.batchItem}>
-                                <div className={styles.batchInfo}>
-                                    <div className={styles.batchTitle}>{batch.name}</div>
-                                <div className={styles.batchMeta}>{formatDateOnly(batch.createdAt)}</div>
+                            <div key={batch.id}>
+                                <div
+                                    className={styles.batchItem}
+                                    onClick={() =>
+                                        setOpenBatchId((prev) => (prev === batch.id ? null : batch.id))
+                                    }
+                                >
+                                    <div className={styles.batchInfo}>
+                                        <div className={styles.batchTitle}>{batch.name}</div>
+                                        <div className={styles.batchMeta}>
+                                            {formatDateOnly(batch.createdAt)}
+                                        </div>
+                                    </div>
                                 </div>
-
+                                {openBatchId === batch.id &&
+                                    Array.isArray(batch.results) &&
+                                    batch.results.length > 0 && (
+                                        <div className={styles.batchTests}>
+                                            {batch.results.map((r, index) => (
+                                                <div
+                                                    key={`${batch.id}-${index}`}
+                                                    className={`${styles.batchTestChip} ${isDarkBackground(r.color) ? styles.batchTestChipDark : ""}`}
+                                                    style={{
+                                                        backgroundColor: r.color,
+                                                        ['--chip-color']: r.color,
+                                                    }}
+                                                >
+                                                    <div className={styles.itemTest}>{r.id}</div>
+                                                    <div className={styles.itemValue}>
+                                                        {r.value}
+                                                        <span className={styles.batchTestId}>
+                                                            {r.id === "S" || r.id === "M"
+                                                                ? `Test ${r.id}`
+                                                                : r.id}
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.batchTestDelete}
+                                                        onClick={() => {
+                                                            const updated = batches.map((b) => {
+                                                                if (b.id !== batch.id) return b;
+                                                                const nextResults = (b.results || []).filter(
+                                                                    (_item, i) => i !== index
+                                                                );
+                                                                return { ...b, results: nextResults };
+                                                            });
+                                                            setBatches(updated);
+                                                        }}
+                                                        aria-label="Delete test"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                             </div>
                         ))}
                     </div>
                 )}
 
                 {isModalOpen && (
-                    <div className={styles.modalOverlay}>
+                    <div
+                        className={styles.modalOverlay}
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                setIsModalOpen(false);
+                            }
+                        }}
+                    >
                         <div className={styles.modal}>
                             <div className={styles.modalHeader}>
                                 <h2 className={styles.modalTitle}>Create Batch</h2>
@@ -112,6 +217,7 @@ const BatchesPage = () => {
                                     type="text"
                                     className={styles.modalInput}
                                     placeholder="Batch name "
+                                    ref={nameInputRef}
                                     value={batchName}
                                     onChange={(e) => setBatchName(e.target.value)}
                                 />
@@ -148,5 +254,3 @@ const BatchesPage = () => {
 };
 
 export default BatchesPage;
-// ---------------------------------
-

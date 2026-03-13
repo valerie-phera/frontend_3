@@ -2,9 +2,9 @@ import Container from "../../components/Container/Container";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import Check from "../../assets/Check";
-import Export from "../../assets/Export";
 import AddToBatch from "../../assets/AddToBatch";
 import ExportResults from "../../assets/ExportResults";
+import CloseIcon from "../../assets/CloseIcon";
 import { useHistory } from "../../context/HistoryContext";
 
 import styles from "./ResultsPage.module.css";
@@ -75,19 +75,10 @@ const ResultsPage = () => {
     const selectedTests = location.state?.selectedTests || [];
     const [results, setResults] = useState([]);
     const { addResults } = useHistory();
-    const [isExportOpen, setIsExportOpen] = useState(false);
-    const exportRef = useRef(null);
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (exportRef.current && !exportRef.current.contains(e.target)) {
-                setIsExportOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
+    const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+    const [batches, setBatches] = useState([]);
+    const [newBatchName, setNewBatchName] = useState("");
+    const batchModalRef = useRef(null);
 
     const testsData = {
         S: { name: "Test S", gradient: gradientS },
@@ -96,24 +87,118 @@ const ResultsPage = () => {
 
     useEffect(() => {
         const createdAt = Date.now();
-        setResults(
-            selectedTests
-                .map((id) => {
-                    const test = testsData[id];
-                    if (!test) return null;
+        const nextResults = selectedTests
+            .map((id) => {
+                const test = testsData[id];
+                if (!test) return null;
 
-                    const value = randomStep(3.5, 7.0, 0.1);
-                    const confidence = Math.floor(Math.random() * 31) + 70;
-                    const relativePos = (value - 3.5) / (7 - 3.5);
-                    const color = getGradientColor(test.gradient, relativePos);
-                    const label = getAcidityLabel(value);
+                const value = randomStep(3.5, 7.0, 0.1);
+                const confidence = Math.floor(Math.random() * 31) + 70;
+                const relativePos = (value - 3.5) / (7 - 3.5);
+                const color = getGradientColor(test.gradient, relativePos);
+                const label = getAcidityLabel(value);
 
-                    return { id, value, confidence, color, label, createdAt };
-                })
-                .filter(Boolean)
-        );
+                return { id, value, confidence, color, label, createdAt };
+            })
+            .filter(Boolean);
+        setResults(nextResults);
+        if (nextResults.length > 0) {
+            addResults(nextResults);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedTests.join(",")]);
+
+    useEffect(() => {
+        try {
+            const raw = window.localStorage.getItem("phScannerBatches");
+            const parsed = raw ? JSON.parse(raw) : [];
+            setBatches(Array.isArray(parsed) ? parsed : []);
+        } catch {
+            setBatches([]);
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                setIsBatchModalOpen(false);
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, []);
+
+    const handleOpenBatchModal = () => {
+        try {
+            const raw = window.localStorage.getItem("phScannerBatches");
+            const parsed = raw ? JSON.parse(raw) : [];
+            setBatches(Array.isArray(parsed) ? parsed : []);
+        } catch {
+            setBatches([]);
+        }
+        setIsBatchModalOpen(true);
+    };
+
+    const handleAttachToBatch = (batchId) => {
+        try {
+            const raw = window.localStorage.getItem("phScannerBatches");
+            const parsed = raw ? JSON.parse(raw) : [];
+            if (!Array.isArray(parsed)) return;
+
+            const updated = parsed.map((batch) => {
+                if (batch.id !== batchId) return batch;
+                const existing = Array.isArray(batch.results) ? batch.results : [];
+                const testsToAdd = results.map((r) => ({
+                    id: r.id,
+                    value: r.value,
+                    color: r.color,
+                    createdAt: r.createdAt,
+                }));
+                return {
+                    ...batch,
+                    results: [...existing, ...testsToAdd],
+                };
+            });
+
+            window.localStorage.setItem("phScannerBatches", JSON.stringify(updated));
+            setBatches(updated);
+            setIsBatchModalOpen(false);
+        } catch {
+            // ignore storage errors
+        }
+    };
+
+    const handleCreateBatchAndAttach = () => {
+        const name = newBatchName.trim();
+        if (!name) return;
+
+        const now = Date.now();
+        const newBatch = {
+            id: `batch-${now}-${Math.random().toString(36).slice(2)}`,
+            name,
+            description: "",
+            createdAt: now,
+            results: results.map((r) => ({
+                id: r.id,
+                value: r.value,
+                color: r.color,
+                createdAt: r.createdAt,
+            })),
+        };
+
+        try {
+            const raw = window.localStorage.getItem("phScannerBatches");
+            const parsed = raw ? JSON.parse(raw) : [];
+            const existing = Array.isArray(parsed) ? parsed : [];
+            const updated = [newBatch, ...existing];
+            window.localStorage.setItem("phScannerBatches", JSON.stringify(updated));
+            setBatches(updated);
+            setNewBatchName("");
+            setIsBatchModalOpen(false);
+        } catch {
+            // ignore
+        }
+    };
 
     return (
         <main className={styles.content}>
@@ -178,68 +263,89 @@ const ResultsPage = () => {
                 </div>
 
                 <div className={styles.wrapBtn}>
-                    <button className={styles.btnTransparent}>
+                    <button className={styles.btnTransparent} onClick={handleOpenBatchModal}>
                         <AddToBatch /> Add to Batch
                     </button>
-                    <div className={styles.exportWrap} ref={exportRef}>
-                        <button
-                            type="button"
-                            className={styles.btnTransparent}
-                            onClick={() => setIsExportOpen(prev => !prev)}
-                        >
-                            <Export /> Export Results
-                        </button>
-
-                        {isExportOpen && (
-                            <ul className={styles.exportDropdown} role="menu">
-                                <li role="none">
-                                    <button
-                                        type="button"
-                                        role="menuitem"
-                                        className={styles.exportOption}
-                                        onClick={() => setIsExportOpen(false)}
-                                    >
-                                        Export CSV
-                                    </button>
-                                </li>
-                                <li role="none">
-                                    <button
-                                        type="button"
-                                        role="menuitem"
-                                        className={styles.exportOption}
-                                        onClick={() => setIsExportOpen(false)}
-                                    >
-                                        Export JSON
-                                    </button>
-                                </li>
-                                <li role="none">
-                                    <button
-                                        type="button"
-                                        role="menuitem"
-                                        className={styles.exportOption}
-                                        onClick={() => setIsExportOpen(false)}
-                                    >
-                                        Export XLSX
-                                    </button>
-                                </li>
-                            </ul>
-                        )}
-                    </div>
+                    <button className={styles.btnTransparent}>
+                        <ExportResults /> Export Results
+                    </button>
                     <div className={styles.blockBtn}>
                         <button className={styles.btnTransparent} onClick={() => navigate("/scan")}>
                             Scan Again
                         </button>
                         <button
                             className={styles.btn}
-                            onClick={() => {
-                                addResults(results);
-                                navigate("/history");
-                            }}
+                            onClick={() => navigate("/history")}
                         >
                             <Check /> View History
                         </button>
                     </div>
                 </div>
+                {isBatchModalOpen && (
+                    <div
+                        className={styles.batchModalOverlay}
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                setIsBatchModalOpen(false);
+                            }
+                        }}
+                    >
+                        <div className={styles.batchModal} ref={batchModalRef}>
+                            <div className={styles.batchModalHeader}>
+                                <h2 className={styles.batchModalTitle}>Add to Batch</h2>
+                                <button
+                                    type="button"
+                                    className={styles.batchModalClose}
+                                    onClick={() => setIsBatchModalOpen(false)}
+                                    aria-label="Close"
+                                >
+                                    <CloseIcon />
+                                </button>
+                            </div>
+                            <div className={styles.batchModalBody}>
+                                {batches.length === 0 ? (
+                                    <p className={styles.batchModalEmpty}>
+                                        No batches yet. Create one below.
+                                    </p>
+                                ) : (
+                                    <ul className={styles.batchModalList}>
+                                        {batches.map((batch) => (
+                                            <li key={batch.id}>
+                                                <button
+                                                    type="button"
+                                                    className={styles.batchModalItem}
+                                                    onClick={() => handleAttachToBatch(batch.id)}
+                                                >
+                                                    <span className={styles.batchModalIcon} aria-hidden>
+                                                        <AddToBatch />
+                                                    </span>
+                                                    <span className={styles.batchModalName}>{batch.name}</span>
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                            <div className={styles.batchModalFooter}>
+                                <input
+                                    type="text"
+                                    className={styles.batchModalInput}
+                                    placeholder="New batch name"
+                                    value={newBatchName}
+                                    onChange={(e) => setNewBatchName(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.batchModalAddBtn}
+                                    onClick={handleCreateBatchAndAttach}
+                                    disabled={!newBatchName.trim()}
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </Container>
         </main>
     );
