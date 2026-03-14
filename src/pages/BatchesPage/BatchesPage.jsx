@@ -55,8 +55,6 @@ const BatchesPage = () => {
             // ignore
         }
     }, [batches]);
-    // console.log(batches);
-
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -148,7 +146,15 @@ const BatchesPage = () => {
                                     <div className={styles.batchInfo}>
                                         <div className={styles.batchTitle}>{batch.name}</div>
                                         <div className={styles.batchMeta}>
-                                            {(batch.results || []).length} results · {formatDateOnly(batch.createdAt)}
+                                            {(() => {
+                                                const results = batch.results || [];
+                                                const count = selected === "All"
+                                                    ? results.length
+                                                    : selected === "Test S"
+                                                        ? results.filter((r) => r.id === "S").length
+                                                        : results.filter((r) => r.id === "M").length;
+                                                return `${count} results · ${formatDateOnly(batch.createdAt)}`;
+                                            })()}
                                         </div>
                                     </div>
                                     <div className={styles.batchActions}>
@@ -177,49 +183,59 @@ const BatchesPage = () => {
                                                     {batch.description}
                                                 </div>
                                             )}
-                                            {Array.isArray(batch.results) && batch.results.length > 0 ? (
-                                                <div className={styles.batchTests}>
-                                                {batch.results.map((r, index) => (
-                                                    <div
-                                                        key={`${batch.id}-${index}`}
-                                                        className={`${styles.batchTestChip} ${isDarkBackground(r.color) ? styles.batchTestChipDark : ""}`}
-                                                        style={{
-                                                            backgroundColor: r.color,
-                                                            ['--chip-color']: r.color,
-                                                        }}
-                                                    >
-                                                        <div className={styles.itemTest}>{r.id}</div>
-                                                        <div className={styles.itemValue}>
-                                                            {r.value}
-                                                            <span className={styles.batchTestId}>
-                                                                {r.id === "S" || r.id === "M"
-                                                                    ? `Test ${r.id}`
-                                                                    : r.id}
-                                                            </span>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            className={styles.batchTestDelete}
-                                                            onClick={() => {
-                                                                const updated = batches.map((b) => {
-                                                                    if (b.id !== batch.id) return b;
-                                                                    const nextResults = (b.results || []).filter(
-                                                                        (_item, i) => i !== index
-                                                                    );
-                                                                    return { ...b, results: nextResults };
-                                                                });
-                                                                setBatches(updated);
-                                                            }}
-                                                            aria-label="Delete test"
-                                                        >
-                                                            <DeleteIcon />
-                                                        </button>
+                                            {(() => {
+                                                const results = batch.results || [];
+                                                const filtered = results
+                                                    .map((r, originalIndex) => ({ r, originalIndex }))
+                                                    .filter(({ r }) =>
+                                                        selected === "All" ||
+                                                        (selected === "Test S" && r.id === "S") ||
+                                                        (selected === "Test M" && r.id === "M")
+                                                    );
+                                                return filtered.length > 0 ? (
+                                                    <div className={styles.batchTests}>
+                                                        {filtered.map(({ r, originalIndex }) => (
+                                                            <div
+                                                                key={`${batch.id}-${originalIndex}`}
+                                                                className={`${styles.batchTestChip} ${isDarkBackground(r.color) ? styles.batchTestChipDark : ""}`}
+                                                                style={{
+                                                                    backgroundColor: r.color,
+                                                                    ['--chip-color']: r.color,
+                                                                }}
+                                                            >
+                                                                <div className={styles.itemTest}>{r.id}</div>
+                                                                <div className={styles.itemValue}>
+                                                                    {r.value}
+                                                                    <span className={styles.batchTestId}>
+                                                                        {r.id === "S" || r.id === "M"
+                                                                            ? `Test ${r.id}`
+                                                                            : r.id}
+                                                                    </span>
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    className={styles.batchTestDelete}
+                                                                    onClick={() => {
+                                                                        const updated = batches.map((b) => {
+                                                                            if (b.id !== batch.id) return b;
+                                                                            const nextResults = (b.results || []).filter(
+                                                                                (_, i) => i !== originalIndex
+                                                                            );
+                                                                            return { ...b, results: nextResults };
+                                                                        });
+                                                                        setBatches(updated);
+                                                                    }}
+                                                                    aria-label="Delete test"
+                                                                >
+                                                                    <DeleteIcon />
+                                                                </button>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                                <p className={styles.batchEmpty}>No results in this batch.</p>
-                                            )}
+                                                ) : (
+                                                    <p className={styles.batchEmpty}>No results in this batch.</p>
+                                                );
+                                            })()}
                                         </div>
                                         </div>
                             </div>
