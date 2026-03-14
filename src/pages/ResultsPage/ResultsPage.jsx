@@ -6,6 +6,7 @@ import AddToBatch from "../../assets/AddToBatch";
 import ExportResults from "../../assets/ExportResults";
 import CloseIcon from "../../assets/CloseIcon";
 import { useHistory } from "../../context/HistoryContext";
+import { formatValue } from "../../utils/formatValue";
 
 import styles from "./ResultsPage.module.css";
 
@@ -69,10 +70,14 @@ const getAcidityLabel = (value) => {
     return "Neutral";
 };
 
+const RESULTS_STORAGE_KEY = "phResults";
+const addedScanIds = new Set();
+
 const ResultsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const selectedTests = location.state?.selectedTests || [];
+    const scanId = location.state?.scanId;
     const [results, setResults] = useState([]);
     const { addResults } = useHistory();
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
@@ -86,6 +91,21 @@ const ResultsPage = () => {
     };
 
     useEffect(() => {
+        if (scanId != null) {
+            try {
+                const cached = sessionStorage.getItem(`${RESULTS_STORAGE_KEY}-${scanId}`);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        setResults(parsed);
+                        return;
+                    }
+                }
+            } catch {
+                // ignore
+            }
+        }
+
         const createdAt = Date.now();
         const nextResults = selectedTests
             .map((id) => {
@@ -102,11 +122,24 @@ const ResultsPage = () => {
             })
             .filter(Boolean);
         setResults(nextResults);
+
         if (nextResults.length > 0) {
-            addResults(nextResults);
+            if (scanId != null) {
+                try {
+                    sessionStorage.setItem(`${RESULTS_STORAGE_KEY}-${scanId}`, JSON.stringify(nextResults));
+                } catch {
+                    // ignore
+                }
+                if (!addedScanIds.has(scanId)) {
+                    addedScanIds.add(scanId);
+                    addResults(nextResults);
+                }
+            } else {
+                addResults(nextResults);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedTests.join(",")]);
+    }, [selectedTests.join(","), scanId]);
 
     useEffect(() => {
         try {
@@ -229,7 +262,7 @@ const ResultsPage = () => {
                                         <div className={styles.infoTitle}>{test.name}</div>
 
                                         <div className={styles.infoValue}>
-                                            <span>{value.toFixed(1)}</span> pH
+                                            <span>{formatValue(value)}</span> pH
                                         </div>
 
                                         <div className={styles.infoText}>

@@ -1,13 +1,25 @@
+import { useState, useEffect } from "react";
 import Container from "../../components/Container/Container";
 import { useNavigate } from "react-router-dom";
 import { useHistory } from "../../context/HistoryContext";
 import { formatCreatedAt } from "../../utils/formatDate";
+import { formatValue } from "../../utils/formatValue";
 import Drop from "../../assets/Drop";
 import History from "../../assets/History";
 import Batches from "../../assets/Batches";
 import ScanBtn from "../../assets/ScanBtn";
 
 import styles from "./HomePage.module.css";
+
+const getBatchesCount = () => {
+    try {
+        const raw = window.localStorage.getItem("phScannerBatches");
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.length : 0;
+    } catch {
+        return 0;
+    }
+};
 
 const testsData = {
     S: { name: "Test S" },
@@ -27,7 +39,12 @@ const isDarkBackground = (colorStr) => {
 const HomePage = () => {
     const navigate = useNavigate();
     const { items } = useHistory();
+    const [batchesCount, setBatchesCount] = useState(getBatchesCount);
     const lastThree = items.slice(0, 3);
+
+    useEffect(() => {
+        setBatchesCount(getBatchesCount());
+    }, []);
 
     return (
         <>
@@ -47,7 +64,7 @@ const HomePage = () => {
                         </div>
                         <div className={styles.box} onClick={() => { navigate("/batches") }}>
                             <div className={styles.wrapImg}><Batches /></div>
-                            <div className={styles.num}>0</div>
+                            <div className={styles.num}>{batchesCount}</div>
                             <p className={styles.text}>Batches</p>
                         </div>
                     </div>
@@ -69,7 +86,7 @@ const HomePage = () => {
                                             <div className={styles.itemTest}>{item.id}</div>
                                             <div className={styles.itemInfo}>
                                                 <div className={styles.itemValue}>
-                                                    <span>{item.value.toFixed(1)} </span> pH
+                                                    <span>{formatValue(item.value)} </span> pH
                                                 </div>
                                                 <div className={styles.itemTime}>{test.name} {formatCreatedAt(item.createdAt)}</div>
                                             </div>

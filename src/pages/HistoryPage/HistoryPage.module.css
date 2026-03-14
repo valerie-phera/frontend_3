@@ -1,6 +1,7 @@
 .content {
     background: #f7faf8;
     min-height: 100dvh;
+    padding-bottom: 80px;
 }
 
 .header {
@@ -194,6 +195,7 @@
     border-radius: 12px;
 
     display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -202,6 +204,40 @@
     font-weight: 500;
     line-height: 20px;
     color: #131C20;
+}
+
+.wrapAction {
+    display: flex;
+    gap: 8px;
+}
+
+.addToBatch {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #131C20;
+    padding: 0 12px;
+    background-color: #f7f8f8;
+    border: none;
+    border-radius: 10px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: 0.2s;
+}
+
+.addToBatch:hover {
+    background: #acbd9e;
+}
+
+.addToBatch svg {
+    width: 16px;
+    height: 16px;
+
 }
 
 .close {
@@ -358,4 +394,124 @@
 .itemDark .itemInfo *,
 .itemDark .deleteIcon {
     color: #fff;
+}
+
+/* Add to Batch modal */
+.batchModalOverlay {
+    position: fixed;
+    inset: 0;
+    background: #000000cc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 15px;
+}
+
+.batchModal {
+    background: #f7f8f8;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 512px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.batchModalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.batchModalTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #131C20;
+}
+
+.batchModalClose {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.batchModalClose:hover {
+    background: #acbd9e;
+}
+
+.batchModalClose svg {
+    width: 16px;
+    height: 16px;
+}
+
+.batchModalBody {
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.batchModalEmpty {
+    font-size: 14px;
+    color: #576B75;
+}
+
+.batchModalList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.batchModalItem {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid #d8ded3;
+    background: #f7f8f8;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    line-height: 20px;
+    transition: background 0.2s;
+}
+
+.batchModalItem:hover {
+    background: #acbd9e;
+}
+
+.batchModalName {
+    font-weight: 500;
+    color: #131C20;
+}
+
+.batchModalIcon {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.batchModalIcon svg {
+    width: 16px;
+    height: 16px;
 }

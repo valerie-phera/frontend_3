@@ -5,6 +5,7 @@ import CloseIcon from "../../assets/CloseIcon";
 import Export from "../../assets/Export";
 import DeleteIcon from "../../assets/DeleteIcon";
 
+import { formatValue } from "../../utils/formatValue";
 import styles from "./BatchesPage.module.css";
 
 const formatDateOnly = (timestamp) => {
@@ -205,7 +206,7 @@ const BatchesPage = () => {
                                                             >
                                                                 <div className={styles.itemTest}>{r.id}</div>
                                                                 <div className={styles.itemValue}>
-                                                                    {r.value}
+                                                                    {formatValue(r.value)}
                                                                     <span className={styles.batchTestId}>
                                                                         {r.id === "S" || r.id === "M"
                                                                             ? `Test ${r.id}`

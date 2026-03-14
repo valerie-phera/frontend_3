@@ -23,8 +23,9 @@ const CameraPreviewPlaceholder = () => {
     const handleSimulateScan = () => {
         if (isScanning) return;
         setIsScanning(true);
+        const scanId = Date.now();
         timeoutRef.current = window.setTimeout(() => {
-            navigate("/results", { state: { selectedTests } });
+            navigate("/results", { state: { selectedTests, scanId } });
             setIsScanning(false);
         }, 1000);
     };

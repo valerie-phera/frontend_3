@@ -5,11 +5,11 @@ import App from './components/App.jsx';
 import { HistoryProvider } from './context/HistoryContext.jsx';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <BrowserRouter>
       <HistoryProvider>
         <App />
       </HistoryProvider>
     </BrowserRouter>
-  </StrictMode>,
+  // </StrictMode>,
 );
