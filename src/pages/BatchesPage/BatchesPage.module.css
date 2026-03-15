@@ -1,6 +1,7 @@
 .content {
     background: #f7faf8;
     min-height: 100dvh;
+    padding-bottom: 80px;
 }
 
 .wrapTitle {

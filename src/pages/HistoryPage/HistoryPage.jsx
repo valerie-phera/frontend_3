@@ -114,6 +114,7 @@ const HistoryPage = () => {
             value: item.value,
             color: item.color,
             createdAt: item.createdAt ?? Date.now(),
+            readingName: (item.readingName || "").slice(0, 15),
         }));
 
         try {
@@ -125,7 +126,7 @@ const HistoryPage = () => {
                 const existing = Array.isArray(batch.results) ? batch.results : [];
                 return {
                     ...batch,
-                    results: [...existing, ...testsToAdd],
+                    results: [...testsToAdd, ...existing],
                 };
             });
 
@@ -304,6 +305,11 @@ const HistoryPage = () => {
                                             <div className={styles.itemValue}>
                                                 <span>{formatValue(item.value)} </span> {test.name}
                                             </div>
+                                            {item.readingName && (
+                                                <div className={styles.itemReadingName}>
+                                                    {item.readingName.slice(0, 15)}
+                                                </div>
+                                            )}
                                             <div className={styles.itemTime}>{formatCreatedAt(item.createdAt)}</div>
                                         </div>
                                         <button

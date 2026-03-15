@@ -1,7 +1,7 @@
 .content {
     background: #f7faf8;
     min-height: 100dvh;
-    padding-bottom: 80px;
+    padding-bottom: 180px;
 }
 
 .header {
@@ -347,6 +347,13 @@
     line-height: 1.75rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     color: #fff;
+}
+
+.itemReadingName {
+    opacity: .9;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
 }
 
 .itemTime {

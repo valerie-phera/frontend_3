@@ -5,6 +5,7 @@ import Check from "../../assets/Check";
 import AddToBatch from "../../assets/AddToBatch";
 import ExportResults from "../../assets/ExportResults";
 import CloseIcon from "../../assets/CloseIcon";
+import Plus from "../../assets/Plus";
 import { useHistory } from "../../context/HistoryContext";
 import { formatValue } from "../../utils/formatValue";
 
@@ -79,11 +80,13 @@ const ResultsPage = () => {
     const selectedTests = location.state?.selectedTests || [];
     const scanId = location.state?.scanId;
     const [results, setResults] = useState([]);
-    const { addResults } = useHistory();
+    const { addResults, updateItem } = useHistory();
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
     const [batches, setBatches] = useState([]);
     const [newBatchName, setNewBatchName] = useState("");
+    const [readingNames, setReadingNames] = useState([]);
     const batchModalRef = useRef(null);
+    const lastAddedItemIdsRef = useRef([]);
 
     const testsData = {
         S: { name: "Test S", gradient: gradientS },
@@ -98,6 +101,7 @@ const ResultsPage = () => {
                     const parsed = JSON.parse(cached);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         setResults(parsed);
+                        setReadingNames(parsed.map((r) => (r.readingName || "").slice(0, 15)));
                         return;
                     }
                 }
@@ -122,6 +126,7 @@ const ResultsPage = () => {
             })
             .filter(Boolean);
         setResults(nextResults);
+        setReadingNames(nextResults.map(() => ""));
 
         if (nextResults.length > 0) {
             if (scanId != null) {
@@ -132,10 +137,12 @@ const ResultsPage = () => {
                 }
                 if (!addedScanIds.has(scanId)) {
                     addedScanIds.add(scanId);
-                    addResults(nextResults);
+                    const itemIds = addResults(nextResults);
+                    lastAddedItemIdsRef.current = itemIds || [];
                 }
             } else {
-                addResults(nextResults);
+                const itemIds = addResults(nextResults);
+                lastAddedItemIdsRef.current = itemIds || [];
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,6 +179,29 @@ const ResultsPage = () => {
         setIsBatchModalOpen(true);
     };
 
+    const handleReadingNameChange = (index, value) => {
+        const name = value.slice(0, 15);
+        setReadingNames((prev) => {
+            const next = [...prev];
+            next[index] = name;
+            return next;
+        });
+        setResults((prev) => {
+            const next = prev.map((r, i) => (i === index ? { ...r, readingName: name } : r));
+            if (scanId != null) {
+                try {
+                    sessionStorage.setItem(`${RESULTS_STORAGE_KEY}-${scanId}`, JSON.stringify(next));
+                } catch {
+                    // ignore
+                }
+            }
+            return next;
+        });
+        if (lastAddedItemIdsRef.current[index] && updateItem) {
+            updateItem(lastAddedItemIdsRef.current[index], { readingName: name });
+        }
+    };
+
     const handleAttachToBatch = (batchId) => {
         try {
             const raw = window.localStorage.getItem("phScannerBatches");
@@ -181,15 +211,16 @@ const ResultsPage = () => {
             const updated = parsed.map((batch) => {
                 if (batch.id !== batchId) return batch;
                 const existing = Array.isArray(batch.results) ? batch.results : [];
-                const testsToAdd = results.map((r) => ({
+                const testsToAdd = results.map((r, i) => ({
                     id: r.id,
                     value: r.value,
                     color: r.color,
                     createdAt: r.createdAt,
+                    readingName: (r.readingName || readingNames[i] || "").slice(0, 15),
                 }));
                 return {
                     ...batch,
-                    results: [...existing, ...testsToAdd],
+                    results: [...testsToAdd, ...existing],
                 };
             });
 
@@ -211,11 +242,12 @@ const ResultsPage = () => {
             name,
             description: "",
             createdAt: now,
-            results: results.map((r) => ({
+            results: results.map((r, i) => ({
                 id: r.id,
                 value: r.value,
                 color: r.color,
                 createdAt: r.createdAt,
+                readingName: (r.readingName || readingNames[i] || "").slice(0, 15),
             })),
         };
 
@@ -242,7 +274,7 @@ const ResultsPage = () => {
                 </p>
 
                 <div className={styles.wrapInfoBlock}>
-                    {results.map(({ id, value, confidence, color }) => {
+                    {results.map(({ id, value, confidence, color }, index) => {
                         const test = testsData[id];
                         if (!test) return null;
 
@@ -275,7 +307,13 @@ const ResultsPage = () => {
                                     </div>
                                 </div>
 
-                                <input type="text" className={styles.input} placeholder="Name this reading (optional)" />
+                                <input
+                                    type="text"
+                                    className={styles.input}
+                                    placeholder="Name this reading (optional)"
+                                    value={readingNames[index] ?? ""}
+                                    onChange={(e) => handleReadingNameChange(index, e.target.value)}
+                                />
 
                                 {/* Indicator */}
                                 <div className={styles[`indicator${id}`]}>
@@ -373,7 +411,7 @@ const ResultsPage = () => {
                                     onClick={handleCreateBatchAndAttach}
                                     disabled={!newBatchName.trim()}
                                 >
-                                    Add
+                                    <Plus />
                                 </button>
                             </div>
                         </div>

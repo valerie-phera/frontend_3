@@ -26,7 +26,7 @@ export const HistoryProvider = ({ children }) => {
   }, [items]);
 
   const addResults = (results) => {
-    if (!results || results.length === 0) return;
+    if (!results || results.length === 0) return [];
 
     const flattened = results.map((r, i) => ({
       ...r,
@@ -35,6 +35,13 @@ export const HistoryProvider = ({ children }) => {
     }));
 
     setItems((prev) => [...flattened, ...prev]);
+    return flattened.map((it) => it.itemId);
+  };
+
+  const updateItem = (itemId, patch) => {
+    setItems((prev) =>
+      prev.map((it) => (it.itemId === itemId ? { ...it, ...patch } : it))
+    );
   };
 
   const removeItem = (itemId) => {
@@ -42,7 +49,7 @@ export const HistoryProvider = ({ children }) => {
   };
 
   return (
-    <HistoryContext.Provider value={{ items, addResults, removeItem }}>
+    <HistoryContext.Provider value={{ items, addResults, updateItem, removeItem }}>
       {children}
     </HistoryContext.Provider>
   );

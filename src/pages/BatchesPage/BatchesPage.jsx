@@ -211,6 +211,7 @@ const BatchesPage = () => {
                                                                         {r.id === "S" || r.id === "M"
                                                                             ? `Test ${r.id}`
                                                                             : r.id}
+                                                                        {r.readingName ? ` · ${r.readingName.slice(0, 15)}` : ""}
                                                                     </span>
                                                                 </div>
                                                                 <button
