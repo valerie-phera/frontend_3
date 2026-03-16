@@ -3,10 +3,18 @@
   min-height: 100%;
 }
 
-.page {
+.pageEnter {
   min-height: 100%;
+  animation: pageEnter 0.2s ease-out forwards;
 }
 
-.routeWrapper {
-  min-height: 100%;
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
