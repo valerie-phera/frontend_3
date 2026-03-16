@@ -3,6 +3,7 @@ import Container from "../../components/Container/Container";
 import { useHistory } from "../../context/HistoryContext";
 import { formatCreatedAt } from "../../utils/formatDate";
 import { formatValue } from "../../utils/formatValue";
+import { toExportRow, exportCSV, exportJSON, exportXLSX } from "../../utils/exportResults";
 import DeleteIcon from "../../assets/DeleteIcon";
 import Check from "../../assets/Check";
 import Search from "../../assets/Search";
@@ -180,6 +181,34 @@ const HistoryPage = () => {
         return list;
     }, [items, activeFilter, searchQuery]);
 
+    const getExportData = () =>
+        checkedIds.size > 0
+            ? filtered.filter((item) => checkedIds.has(item.itemId))
+            : filtered;
+
+    const getExportRows = () =>
+        getExportData().map((item) =>
+            toExportRow(item, (testsData[item.id] || {}).name)
+        );
+
+    const handleExportCSV = () => {
+        const rows = getExportRows();
+        if (rows.length > 0) exportCSV(rows);
+        setIsExportOpen(false);
+    };
+
+    const handleExportJSON = () => {
+        const rows = getExportRows();
+        if (rows.length > 0) exportJSON(rows);
+        setIsExportOpen(false);
+    };
+
+    const handleExportXLSX = () => {
+        const rows = getExportRows();
+        if (rows.length > 0) exportXLSX(rows);
+        setIsExportOpen(false);
+    };
+
     return (
         <main className={styles.content}>
             <Container>
@@ -245,17 +274,17 @@ const HistoryPage = () => {
                                 {isExportOpen && (
                                     <ul className={styles.exportDropdown} role="menu">
                                         <li role="none">
-                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={() => setIsExportOpen(false)}>
+                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={handleExportCSV}>
                                                 Export CSV{checkedIds.size > 0 ? ` (${checkedIds.size})` : ""}
                                             </button>
                                         </li>
                                         <li role="none">
-                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={() => setIsExportOpen(false)}>
+                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={handleExportJSON}>
                                                 Export JSON{checkedIds.size > 0 ? ` (${checkedIds.size})` : ""}
                                             </button>
                                         </li>
                                         <li role="none">
-                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={() => setIsExportOpen(false)}>
+                                            <button type="button" role="menuitem" className={styles.exportOption} onClick={handleExportXLSX}>
                                                 Export XLSX{checkedIds.size > 0 ? ` (${checkedIds.size})` : ""}
                                             </button>
                                         </li>

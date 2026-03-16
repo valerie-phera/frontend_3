@@ -8,6 +8,7 @@ import CloseIcon from "../../assets/CloseIcon";
 import Plus from "../../assets/Plus";
 import { useHistory } from "../../context/HistoryContext";
 import { formatValue } from "../../utils/formatValue";
+import { toExportRow, exportCSV, exportJSON, exportXLSX } from "../../utils/exportResults";
 
 import styles from "./ResultsPage.module.css";
 
@@ -214,6 +215,38 @@ const ResultsPage = () => {
         }
     };
 
+    const getExportRows = () =>
+        results.map((r, i) =>
+            toExportRow(
+                { ...r, readingName: r.readingName || readingNames[i] || "" },
+                testsData[r.id]?.name
+            )
+        );
+
+    const handleExportCSV = () => {
+        const rows = getExportRows();
+        if (rows.length > 0) {
+            exportCSV(rows);
+        }
+        setIsExportOpen(false);
+    };
+
+    const handleExportJSON = () => {
+        const rows = getExportRows();
+        if (rows.length > 0) {
+            exportJSON(rows);
+        }
+        setIsExportOpen(false);
+    };
+
+    const handleExportXLSX = () => {
+        const rows = getExportRows();
+        if (rows.length > 0) {
+            exportXLSX(rows);
+        }
+        setIsExportOpen(false);
+    };
+
     const handleAttachToBatch = (batchId) => {
         try {
             const raw = window.localStorage.getItem("phScannerBatches");
@@ -366,7 +399,7 @@ const ResultsPage = () => {
                                         type="button"
                                         role="menuitem"
                                         className={styles.exportOption}
-                                        onClick={() => setIsExportOpen(false)}
+                                        onClick={handleExportCSV}
                                     >
                                         Export CSV
                                     </button>
@@ -376,7 +409,7 @@ const ResultsPage = () => {
                                         type="button"
                                         role="menuitem"
                                         className={styles.exportOption}
-                                        onClick={() => setIsExportOpen(false)}
+                                        onClick={handleExportJSON}
                                     >
                                         Export JSON
                                     </button>
@@ -386,7 +419,7 @@ const ResultsPage = () => {
                                         type="button"
                                         role="menuitem"
                                         className={styles.exportOption}
-                                        onClick={() => setIsExportOpen(false)}
+                                        onClick={handleExportXLSX}
                                     >
                                         Export XLSX
                                     </button>
