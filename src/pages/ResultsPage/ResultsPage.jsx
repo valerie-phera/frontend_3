@@ -85,7 +85,9 @@ const ResultsPage = () => {
     const [batches, setBatches] = useState([]);
     const [newBatchName, setNewBatchName] = useState("");
     const [readingNames, setReadingNames] = useState([]);
+    const [isExportOpen, setIsExportOpen] = useState(false);
     const batchModalRef = useRef(null);
+    const exportRef = useRef(null);
     const lastAddedItemIdsRef = useRef([]);
 
     const testsData = {
@@ -156,6 +158,16 @@ const ResultsPage = () => {
         } catch {
             setBatches([]);
         }
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (exportRef.current && !exportRef.current.contains(e.target)) {
+                setIsExportOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     useEffect(() => {
@@ -337,9 +349,51 @@ const ResultsPage = () => {
                     <button className={styles.btnTransparent} onClick={handleOpenBatchModal}>
                         <AddToBatch /> Add to Batch
                     </button>
-                    <button className={styles.btnTransparent}>
-                        <ExportResults /> Export Results
-                    </button>
+                    <div className={styles.exportWrap} ref={exportRef}>
+                        <button
+                            type="button"
+                            className={styles.btnTransparent}
+                            onClick={() => setIsExportOpen((prev) => !prev)}
+                            aria-expanded={isExportOpen}
+                            aria-haspopup="true"
+                        >
+                            <ExportResults /> Export Results
+                        </button>
+                        {isExportOpen && (
+                            <ul className={styles.exportDropdown} role="menu">
+                                <li role="none">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={styles.exportOption}
+                                        onClick={() => setIsExportOpen(false)}
+                                    >
+                                        Export CSV
+                                    </button>
+                                </li>
+                                <li role="none">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={styles.exportOption}
+                                        onClick={() => setIsExportOpen(false)}
+                                    >
+                                        Export JSON
+                                    </button>
+                                </li>
+                                <li role="none">
+                                    <button
+                                        type="button"
+                                        role="menuitem"
+                                        className={styles.exportOption}
+                                        onClick={() => setIsExportOpen(false)}
+                                    >
+                                        Export XLSX
+                                    </button>
+                                </li>
+                            </ul>
+                        )}
+                    </div>
                     <div className={styles.blockBtn}>
                         <button className={styles.btnTransparent} onClick={() => navigate("/scan")}>
                             Scan Again
