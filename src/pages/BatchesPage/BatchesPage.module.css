@@ -123,6 +123,7 @@
     align-items: center;
     justify-content: center;
     z-index: 50;
+    padding: 15px;
 }
 
 .modal {
@@ -205,6 +206,7 @@
 .modalFooter {
     display: flex;
     justify-content: flex-end;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
@@ -237,6 +239,16 @@
 .modalBtnCreate:hover {
     background: #acbd9e;
     color: #0b1247;
+}
+
+.modalBtnCreate:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.modalBtnCreate:disabled:hover {
+    background: #0B1247;
+    color: #fff;
 }
 
 .batchList {

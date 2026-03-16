@@ -295,6 +295,7 @@ const BatchesPage = () => {
                                     type="button"
                                     className={styles.modalBtnCreate}
                                     onClick={handleCreateBatch}
+                                    disabled={!batchName}
                                 >
                                     Create
                                 </button>
