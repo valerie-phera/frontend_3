@@ -6,6 +6,7 @@ import Export from "../../assets/Export";
 import DeleteIcon from "../../assets/DeleteIcon";
 
 import { formatValue } from "../../utils/formatValue";
+import { toExportRow, exportCSV, exportJSON, exportXLSX } from "../../utils/exportResults";
 import styles from "./BatchesPage.module.css";
 
 const formatDateOnly = (timestamp) => {
@@ -42,6 +43,8 @@ const BatchesPage = () => {
     });
     const nameInputRef = useRef(null);
     const [openBatchId, setOpenBatchId] = useState(null);
+    const [openExportBatchId, setOpenExportBatchId] = useState(null);
+    const exportRef = useRef(null);
 
     useEffect(() => {
         if (isModalOpen && nameInputRef.current) {
@@ -67,6 +70,16 @@ const BatchesPage = () => {
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (exportRef.current && !exportRef.current.contains(e.target)) {
+                setOpenExportBatchId(null);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const handleCreateBatch = () => {
         const name = batchName.trim();
         if (!name) {
@@ -83,6 +96,28 @@ const BatchesPage = () => {
         setBatchName("");
         setBatchDescription("");
         setIsModalOpen(false);
+    };
+
+    const getBatchExportRows = (batch) => {
+        const results = Array.isArray(batch.results) ? batch.results : [];
+        const filtered =
+            selected === "All"
+                ? results
+                : selected === "Test S"
+                    ? results.filter((r) => r.id === "S")
+                    : results.filter((r) => r.id === "M");
+
+        return filtered.map((r) =>
+            toExportRow(r, r.id === "S" ? "Test S" : r.id === "M" ? "Test M" : r.id)
+        );
+    };
+
+    const safeFileBase = (batch) => {
+        const name = String(batch?.name || "batch")
+            .trim()
+            .slice(0, 40)
+            .replace(/[<>:\"/\\\\|?*]+/g, "_");
+        return `batch-${name || "batch"}`;
     };
 
     return (
@@ -159,8 +194,74 @@ const BatchesPage = () => {
                                         </div>
                                     </div>
                                     <div className={styles.batchActions}>
-                                        <div className={styles.exportAction}>
-                                            <Export />
+                                        <div
+                                            className={styles.exportWrap}
+                                            ref={openExportBatchId === batch.id ? exportRef : null}
+                                        >
+                                            <button
+                                                type="button"
+                                                className={styles.exportAction}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setOpenExportBatchId((prev) =>
+                                                        prev === batch.id ? null : batch.id
+                                                    );
+                                                }}
+                                                aria-label="Export"
+                                                aria-expanded={openExportBatchId === batch.id}
+                                                aria-haspopup="true"
+                                            >
+                                                <Export />
+                                            </button>
+                                            {openExportBatchId === batch.id && (
+                                                <ul className={styles.exportDropdown} role="menu">
+                                                    <li role="none">
+                                                        <button
+                                                            type="button"
+                                                            role="menuitem"
+                                                            className={styles.exportOption}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                const rows = getBatchExportRows(batch);
+                                                                exportCSV(rows, `${safeFileBase(batch)}.csv`);
+                                                                setOpenExportBatchId(null);
+                                                            }}
+                                                        >
+                                                            Export CSV
+                                                        </button>
+                                                    </li>
+                                                    <li role="none">
+                                                        <button
+                                                            type="button"
+                                                            role="menuitem"
+                                                            className={styles.exportOption}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                const rows = getBatchExportRows(batch);
+                                                                exportJSON(rows, `${safeFileBase(batch)}.json`);
+                                                                setOpenExportBatchId(null);
+                                                            }}
+                                                        >
+                                                            Export JSON
+                                                        </button>
+                                                    </li>
+                                                    <li role="none">
+                                                        <button
+                                                            type="button"
+                                                            role="menuitem"
+                                                            className={styles.exportOption}
+                                                            onClick={async (e) => {
+                                                                e.stopPropagation();
+                                                                const rows = getBatchExportRows(batch);
+                                                                await exportXLSX(rows, `${safeFileBase(batch)}.xlsx`);
+                                                                setOpenExportBatchId(null);
+                                                            }}
+                                                        >
+                                                            Export XLSX
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            )}
                                         </div>
                                         <button
                                             type="button"

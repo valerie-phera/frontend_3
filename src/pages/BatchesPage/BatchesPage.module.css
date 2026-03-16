@@ -307,6 +307,56 @@
     margin-left: auto;
 }
 
+.exportWrap {
+    position: relative;
+    display: flex;
+}
+
+.exportDropdown {
+    position: absolute;
+    top: 100%;
+    right: -50px;
+    margin-top: 5px;
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    padding: 4px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #d8ded3;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.exportOption {
+    display: block;
+    width: 100%;
+    padding: 6px 20px 6px 10px;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: "IBM Plex Sans", sans-serif;
+    color: #131C20;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.exportOption:hover {
+    background: #10343c;
+    color: #fff;
+    border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+    .exportDropdown {
+        right: 50%;
+        transform: translateX(50%);
+        max-width: min(260px, 100vw - 32px);
+    }
+}
+
 .batchActions svg {
     width: 16px;
     height: 16px;
@@ -322,6 +372,13 @@
     border-radius: 10px;
     transition: 0.2s;
 }
+
+.exportAction {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
 
 .deleteAction {
     border: none;
@@ -430,7 +487,7 @@
     font-size: 16px;
     font-weight: 700;
     color: #1A1A1A;
-     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .itemValue span {

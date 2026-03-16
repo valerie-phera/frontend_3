@@ -46,28 +46,28 @@ function csvEscape(str) {
  * Export to CSV.
  * rows: array of toExportRow objects (or with the same keys).
  */
-export function exportCSV(rows) {
+export function exportCSV(rows, filename = "export.csv") {
     if (!rows || rows.length === 0) return;
     const headers = ["Test", "Value", "pH Label", "Confidence %", "Created At", "Reading Name"];
     const line = (obj) => headers.map((h) => csvEscape(obj[h])).join(",");
     const csv = [headers.join(","), ...rows.map(line)].join("\r\n");
     const bom = "\uFEFF";
-    downloadFile("export.csv", bom + csv, "text/csv;charset=utf-8");
+    downloadFile(filename, bom + csv, "text/csv;charset=utf-8");
 }
 
 /**
  * Export to JSON.
  */
-export function exportJSON(rows) {
+export function exportJSON(rows, filename = "export.json") {
     if (!rows || rows.length === 0) return;
     const json = JSON.stringify(rows, null, 2);
-    downloadFile("export.json", json, "application/json");
+    downloadFile(filename, json, "application/json");
 }
 
 /**
  * Export to Excel (.xlsx) using SheetJS.
  */
-export async function exportXLSX(rows) {
+export async function exportXLSX(rows, filename = "export.xlsx") {
     if (!rows || rows.length === 0) return;
     const { utils, write } = await import("xlsx");
     const worksheet = utils.json_to_sheet(rows);
@@ -80,7 +80,7 @@ export async function exportXLSX(rows) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "export.xlsx";
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
 }
