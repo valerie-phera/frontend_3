@@ -106,6 +106,21 @@ const HistoryPage = () => {
         setIsBatchModalOpen(true);
     };
 
+    useEffect(() => {
+        if (isBatchModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isBatchModalOpen]);
+
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
+
     const handleAttachToBatch = (batchId) => {
         const selectedItems = items.filter((item) => checkedIds.has(item.itemId));
         if (selectedItems.length === 0) return;
