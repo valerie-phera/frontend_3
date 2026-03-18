@@ -1,4 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Container from "../../components/Container/Container";
 import { useHistory } from "../../context/HistoryContext";
 import { formatCreatedAt } from "../../utils/formatDate";
@@ -327,46 +328,57 @@ const HistoryPage = () => {
                             </div>
                         )}
                         <div className={styles.list}>
-                            {filtered.map((item) => {
-                                const test = testsData[item.id] || { name: item.id };
+                            <AnimatePresence>
+                                {filtered.map((item) => {
+                                    const test = testsData[item.id] || { name: item.id };
 
-                                return (
-                                    <div
-                                        key={item.itemId}
-                                        className={`${styles.item} ${isDarkBackground(item.color) ? styles.itemDark : ""}`}
-                                        style={{ backgroundColor: item.color }}
-                                        onClick={(e) => toggleCheck(item.itemId, e)}
-                                    >
-                                        <button
-                                            type="button"
-                                            className={`${styles.check} ${checkedIds.has(item.itemId) ? styles.checkChecked : ""}`}
-                                            aria-label={checkedIds.has(item.itemId) ? "Deselect" : "Select"}
+                                    return (
+                                        <motion.div
+                                            key={item.itemId}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, x: -50 }}
+                                            transition={{ duration: 0.25 }}
+                                            className={`${styles.item} ${isDarkBackground(item.color) ? styles.itemDark : ""}`}
+                                            style={{ backgroundColor: item.color }}
+                                            onClick={(e) => toggleCheck(item.itemId, e)}
                                         >
-                                            {checkedIds.has(item.itemId) && <Check />}
-                                        </button>
-                                        <div className={styles.itemTest}>{item.id}</div>
-                                        <div className={styles.itemInfo}>
-                                            <div className={styles.itemValue}>
-                                                <span>{formatValue(item.value)} </span> {test.name}
-                                            </div>
-                                            {item.readingName && (
-                                                <div className={styles.itemReadingName}>
-                                                    {item.readingName.slice(0, 15)}
+                                            <button
+                                                type="button"
+                                                className={`${styles.check} ${checkedIds.has(item.itemId) ? styles.checkChecked : ""}`}
+                                                aria-label={checkedIds.has(item.itemId) ? "Deselect" : "Select"}
+                                            >
+                                                {checkedIds.has(item.itemId) && <Check />}
+                                            </button>
+
+                                            <div className={styles.itemTest}>{item.id}</div>
+
+                                            <div className={styles.itemInfo}>
+                                                <div className={styles.itemValue}>
+                                                    <span>{formatValue(item.value)} </span> {test.name}
                                                 </div>
-                                            )}
-                                            <div className={styles.itemTime}>{formatCreatedAt(item.createdAt)}</div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className={styles.deleteIcon}
-                                            onClick={() => removeItem(item.itemId)}
-                                            aria-label="Delete"
-                                        >
-                                            <DeleteIcon />
-                                        </button>
-                                    </div>
-                                );
-                            })}
+
+                                                {item.readingName && (
+                                                    <div className={styles.itemReadingName}>
+                                                        {item.readingName.slice(0, 15)}
+                                                    </div>
+                                                )}
+
+                                                <div className={styles.itemTime}>{formatCreatedAt(item.createdAt)}</div>
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                className={styles.deleteIcon}
+                                                onClick={() => removeItem(item.itemId)}
+                                                aria-label="Delete"
+                                            >
+                                                <DeleteIcon />
+                                            </button>
+                                        </motion.div>
+                                    );
+                                })}
+                            </AnimatePresence>
                         </div>
                     </>
                 )}
